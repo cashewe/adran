@@ -8,4 +8,5 @@ name = "adran"
 crate-type = ["cdylib"]
 
 [dependencies]
+markdown = "1.0.0"
 pyo3 = { version = "0.19", features = ["extension-module"] }

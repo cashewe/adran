@@ -32,3 +32,5 @@ extra bits:
 - there is heading depth, but content depth has no native md context. we will need to implement this to allow for 'sibling' based recontextualisation
 
 I'm still optimistic this is a short week or so long project, but we'll have to see when we get there. its tooken me over two months to get to this point...
+
+for now, dont look for overlap with darn. just assume that since darn preserves start / end index of chunks that they are inherantly overlapping. it may be that in practice they can share an mdast parsing phase or something in future, but thats in future - i dont want to get caught up doing that right away.

@@ -1,0 +1,3 @@
+# _types
+
+the (mostly Enums?) that are useful across modules... tbh this module may get consumed at some point but given the json object is needed by parser and consumer services, im thinking ahead and pretending YAGNI doesnt exist...
