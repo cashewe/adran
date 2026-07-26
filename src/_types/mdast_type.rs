@@ -1,85 +1,33 @@
 use std::fmt;
 
+use markdown::mdast::Node;
+
 /// Enum to mostly mirror the more complex Enums in
-/// markdwon crate. this way we can control quite
-/// what serde looks like for the object.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+/// markdown crate. This keeps the JSON-facing representation
+/// intentionally narrow and aligned with the README plan.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum MdastType {
     Root,
-    Blockquote,
-    FootnoteDefinition,
-    MdxJsxFlowElement,
     List,
-    MdxjsEsm,
-    Toml,
-    Yaml,
-    Break,
-    InlineCode,
-    InlineMath,
-    Delete,
-    Emphasis,
-    MdxTextExpression,
-    FootnoteReference,
-    Html,
-    Image,
-    ImageReference,
-    MdxJsxTextElement,
-    Link,
-    LinkReference,
-    Strong,
     Text,
-    Code,
-    Math,
-    MdxFlowExpression,
     Heading,
     Table,
-    ThematicBreak,
-    TableRow,
-    TableCell,
-    ListItem,
-    Definition,
     Paragraph,
     Section, // needed to link section bodies to their headers
+    Other(String),
 }
 
 impl MdastType {
-    pub fn as_str(&self) -> &'static str {
+    pub fn as_str(&self) -> &str {
         match self {
             Self::Root => "Root",
-            Self::Blockquote => "Blockquote",
-            Self::FootnoteDefinition => "FootnoteDefinition",
-            Self::MdxJsxFlowElement => "MdxJsxFlowElement",
             Self::List => "List",
-            Self::MdxjsEsm => "MdxjsEsm",
-            Self::Toml => "Toml",
-            Self::Yaml => "Yaml",
-            Self::Break => "Break",
-            Self::InlineCode => "InlineCode",
-            Self::InlineMath => "InlineMath",
-            Self::Delete => "Delete",
-            Self::Emphasis => "Emphasis",
-            Self::MdxTextExpression => "MdxTextExpression",
-            Self::FootnoteReference => "FootnoteReference",
-            Self::Html => "Html",
-            Self::Image => "Image",
-            Self::ImageReference => "ImageReference",
-            Self::MdxJsxTextElement => "MdxJsxTextElement",
-            Self::Link => "Link",
-            Self::LinkReference => "LinkReference",
-            Self::Strong => "Strong",
             Self::Text => "Text",
-            Self::Code => "Code",
-            Self::Math => "Math",
-            Self::MdxFlowExpression => "MdxFlowExpression",
             Self::Heading => "Heading",
             Self::Table => "Table",
-            Self::ThematicBreak => "ThematicBreak",
-            Self::TableRow => "TableRow",
-            Self::TableCell => "TableCell",
-            Self::ListItem => "ListItem",
-            Self::Definition => "Definition",
             Self::Paragraph => "Paragraph",
             Self::Section => "Section",
+            Self::Other(name) => name,
         }
     }
 }
@@ -90,43 +38,81 @@ impl fmt::Display for MdastType {
     }
 }
 
-impl From<&MdastNode> for MdastType {
-    fn from(node: &MdastNode) -> Self {
+impl MdastType {
+    pub fn from_mdast_node(node: &Node) -> Option<Self> {
         match node {
-            MdastNode::Root(_) => Self::Root,
-            MdastNode::Blockquote(_) => Self::Blockquote,
-            MdastNode::FootnoteDefinition(_) => Self::FootnoteDefinition,
-            MdastNode::MdxJsxFlowElement(_) => Self::MdxJsxFlowElement,
-            MdastNode::List(_) => Self::List,
-            MdastNode::MdxjsEsm(_) => Self::MdxjsEsm,
-            MdastNode::Toml(_) => Self::Toml,
-            MdastNode::Yaml(_) => Self::Yaml,
-            MdastNode::Break(_) => Self::Break,
-            MdastNode::InlineCode(_) => Self::InlineCode,
-            MdastNode::InlineMath(_) => Self::InlineMath,
-            MdastNode::Delete(_) => Self::Delete,
-            MdastNode::Emphasis(_) => Self::Emphasis,
-            MdastNode::MdxTextExpression(_) => Self::MdxTextExpression,
-            MdastNode::FootnoteReference(_) => Self::FootnoteReference,
-            MdastNode::Html(_) => Self::Html,
-            MdastNode::Image(_) => Self::Image,
-            MdastNode::ImageReference(_) => Self::ImageReference,
-            MdastNode::MdxJsxTextElement(_) => Self::MdxJsxTextElement,
-            MdastNode::Link(_) => Self::Link,
-            MdastNode::LinkReference(_) => Self::LinkReference,
-            MdastNode::Strong(_) => Self::Strong,
-            MdastNode::Text(_) => Self::Text,
-            MdastNode::Code(_) => Self::Code,
-            MdastNode::Math(_) => Self::Math,
-            MdastNode::MdxFlowExpression(_) => Self::MdxFlowExpression,
-            MdastNode::Heading(_) => Self::Heading,
-            MdastNode::Table(_) => Self::Table,
-            MdastNode::ThematicBreak(_) => Self::ThematicBreak,
-            MdastNode::TableRow(_) => Self::TableRow,
-            MdastNode::TableCell(_) => Self::TableCell,
-            MdastNode::ListItem(_) => Self::ListItem,
-            MdastNode::Definition(_) => Self::Definition,
-            MdastNode::Paragraph(_) => Self::Paragraph,
+            Node::Root(_) => Some(Self::Root),
+            Node::List(_) => Some(Self::List),
+            Node::Text(_) => Some(Self::Text),
+            Node::Heading(_) => Some(Self::Heading),
+            Node::Table(_) => Some(Self::Table),
+            Node::Paragraph(_) => Some(Self::Paragraph),
+            _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use markdown::mdast::{Heading, List, Node, Paragraph, Root, Table, Text, ThematicBreak};
+
+    #[test]
+    fn maps_supported_markdown_nodes() {
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::Root(Root {
+                children: vec![],
+                position: None,
+            })),
+            Some(MdastType::Root)
+        );
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::Paragraph(Paragraph {
+                children: vec![],
+                position: None,
+            })),
+            Some(MdastType::Paragraph)
+        );
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::Heading(Heading {
+                children: vec![],
+                position: None,
+                depth: 2,
+            })),
+            Some(MdastType::Heading)
+        );
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::Table(Table {
+                children: vec![],
+                position: None,
+                align: vec![],
+            })),
+            Some(MdastType::Table)
+        );
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::List(List {
+                children: vec![],
+                position: None,
+                ordered: false,
+                start: None,
+                spread: false,
+            })),
+            Some(MdastType::List)
+        );
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::Text(Text {
+                value: "hello".into(),
+                position: None,
+            })),
+            Some(MdastType::Text)
+        );
+    }
+
+    #[test]
+    fn ignores_structural_nodes_outside_the_supported_plan() {
+        assert_eq!(
+            MdastType::from_mdast_node(&Node::ThematicBreak(ThematicBreak { position: None })),
+            None
+        );
     }
 }

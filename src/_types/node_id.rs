@@ -2,7 +2,8 @@ use std::fmt;
 
 /// ID for each new node, which is not-numeric
 /// to avoid assumption of ordinality.
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[serde(transparent)]
 pub struct NodeId(String);
 
 impl NodeId {

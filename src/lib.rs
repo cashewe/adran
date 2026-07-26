@@ -1,3 +1,6 @@
+mod _types;
+pub mod md_parser;
+
 use pyo3::prelude::*;
 
 /// Return a greeting for the given name.

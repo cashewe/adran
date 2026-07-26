@@ -1,0 +1,401 @@
+{
+  "root_id": "Root-0",
+  "source_len": 3445,
+  "nodes": [
+    {
+      "id": "Root-0",
+      "mdast_type": "Root",
+      "range": {
+        "start": 0,
+        "end": 3445
+      },
+      "parent": null,
+      "children": [
+        "section-0"
+      ],
+      "depth": 0,
+      "meta": []
+    },
+    {
+      "id": "section-0",
+      "mdast_type": "Section",
+      "range": {
+        "start": 0,
+        "end": 3445
+      },
+      "parent": "Root-0",
+      "children": [
+        "Heading-0",
+        "Paragraph-0",
+        "Paragraph-1",
+        "section-1",
+        "section-3"
+      ],
+      "depth": 1,
+      "meta": []
+    },
+    {
+      "id": "Heading-0",
+      "mdast_type": "Heading",
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "parent": "section-0",
+      "children": [],
+      "depth": 2,
+      "meta": [
+        {
+          "label": "Wording",
+          "value": "adran"
+        },
+        {
+          "label": "HeadingLevel",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "Paragraph-0",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 9,
+        "end": 49
+      },
+      "parent": "section-0",
+      "children": [],
+      "depth": 2,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-1",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 51,
+        "end": 504
+      },
+      "parent": "section-0",
+      "children": [],
+      "depth": 2,
+      "meta": []
+    },
+    {
+      "id": "section-1",
+      "mdast_type": "Section",
+      "range": {
+        "start": 506,
+        "end": 1859
+      },
+      "parent": "section-0",
+      "children": [
+        "Heading-1",
+        "List-0",
+        "other-Other-0",
+        "List-1",
+        "Paragraph-2",
+        "section-2"
+      ],
+      "depth": 2,
+      "meta": []
+    },
+    {
+      "id": "Heading-1",
+      "mdast_type": "Heading",
+      "range": {
+        "start": 506,
+        "end": 513
+      },
+      "parent": "section-1",
+      "children": [],
+      "depth": 3,
+      "meta": [
+        {
+          "label": "Wording",
+          "value": "jist"
+        },
+        {
+          "label": "HeadingLevel",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "id": "List-0",
+      "mdast_type": "List",
+      "range": {
+        "start": 515,
+        "end": 599
+      },
+      "parent": "section-1",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "other-Other-0",
+      "mdast_type": {
+        "Other": "Other"
+      },
+      "range": {
+        "start": 600,
+        "end": 742
+      },
+      "parent": "section-1",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "List-1",
+      "mdast_type": "List",
+      "range": {
+        "start": 744,
+        "end": 871
+      },
+      "parent": "section-1",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-2",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 872,
+        "end": 1061
+      },
+      "parent": "section-1",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "section-2",
+      "mdast_type": "Section",
+      "range": {
+        "start": 1063,
+        "end": 1859
+      },
+      "parent": "section-1",
+      "children": [
+        "Heading-2",
+        "List-2",
+        "Paragraph-3",
+        "Paragraph-4"
+      ],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Heading-2",
+      "mdast_type": "Heading",
+      "range": {
+        "start": 1063,
+        "end": 1078
+      },
+      "parent": "section-2",
+      "children": [],
+      "depth": 4,
+      "meta": [
+        {
+          "label": "Wording",
+          "value": "extra bits:"
+        },
+        {
+          "label": "HeadingLevel",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "id": "List-2",
+      "mdast_type": "List",
+      "range": {
+        "start": 1079,
+        "end": 1392
+      },
+      "parent": "section-2",
+      "children": [],
+      "depth": 4,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-3",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 1393,
+        "end": 1549
+      },
+      "parent": "section-2",
+      "children": [],
+      "depth": 4,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-4",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 1551,
+        "end": 1859
+      },
+      "parent": "section-2",
+      "children": [],
+      "depth": 4,
+      "meta": []
+    },
+    {
+      "id": "section-3",
+      "mdast_type": "Section",
+      "range": {
+        "start": 1861,
+        "end": 3445
+      },
+      "parent": "section-0",
+      "children": [
+        "Heading-3",
+        "Paragraph-5",
+        "Paragraph-6",
+        "other-Other-1",
+        "Paragraph-7",
+        "List-3",
+        "Paragraph-8",
+        "List-4",
+        "Paragraph-9",
+        "Paragraph-10"
+      ],
+      "depth": 2,
+      "meta": []
+    },
+    {
+      "id": "Heading-3",
+      "mdast_type": "Heading",
+      "range": {
+        "start": 1861,
+        "end": 1903
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": [
+        {
+          "label": "Wording",
+          "value": "jist 2.0: you can (not) change the jist"
+        },
+        {
+          "label": "HeadingLevel",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "id": "Paragraph-5",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 1905,
+        "end": 1950
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-6",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 1952,
+        "end": 2011
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "other-Other-1",
+      "mdast_type": {
+        "Other": "Other"
+      },
+      "range": {
+        "start": 2013,
+        "end": 2071
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-7",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 2073,
+        "end": 2168
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "List-3",
+      "mdast_type": "List",
+      "range": {
+        "start": 2169,
+        "end": 2400
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-8",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 2401,
+        "end": 2434
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "List-4",
+      "mdast_type": "List",
+      "range": {
+        "start": 2436,
+        "end": 2798
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-9",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 2799,
+        "end": 2953
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    },
+    {
+      "id": "Paragraph-10",
+      "mdast_type": "Paragraph",
+      "range": {
+        "start": 2955,
+        "end": 3445
+      },
+      "parent": "section-3",
+      "children": [],
+      "depth": 3,
+      "meta": []
+    }
+  ]
+}
