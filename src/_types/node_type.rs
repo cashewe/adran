@@ -1,6 +1,6 @@
 use std::fmt;
 
-use super::{MdastType, MetaField, NodeId, RangeIdx};
+use super::{MdastType, NodeId, RangeIdx};
 
 
 /// A JSON-friendly representation of an mdast node skeleton.
@@ -12,7 +12,7 @@ pub struct NodeType {
     pub parent: Option<NodeId>,
     pub children: Vec<NodeId>,
     pub depth: u32,
-    pub meta: Vec<MetaField>,
+    pub heading: String,
 }
  
 impl NodeType {
@@ -23,7 +23,7 @@ impl NodeType {
         parent: Option<NodeId>,
         children: Vec<NodeId>,
         depth: u32,
-        meta: Vec<MetaField>,
+        heading: String,
     ) -> Self {
         Self {
             id,
@@ -32,13 +32,13 @@ impl NodeType {
             parent,
             children,
             depth,
-            meta,
+            heading,
         }
     }
 }
  
 impl fmt::Display for NodeType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[{}: {} {}]", self.id, self.mdast_type, self.range)
+        write!(f, "[{}: {} \"{}\" {}]", self.id, self.mdast_type, self.heading, self.range)
     }
 }

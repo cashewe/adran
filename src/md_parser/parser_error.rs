@@ -4,7 +4,7 @@ use core::fmt;
 pub enum ParseError {
     Markdown(String),
 }
-
+ 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -12,5 +12,5 @@ impl fmt::Display for ParseError {
         }
     }
 }
-
+ 
 impl std::error::Error for ParseError {}

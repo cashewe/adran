@@ -5,23 +5,23 @@ use std::fmt;
 #[derive(Clone, Debug, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 #[serde(transparent)]
 pub struct NodeId(String);
-
+ 
 impl NodeId {
     pub fn new(value: impl Into<String>) -> Self {
         Self(value.into())
     }
-
+ 
     pub fn as_str(&self) -> &str {
         &self.0
     }
 }
-
+ 
 impl fmt::Display for NodeId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
     }
 }
-
+ 
 impl AsRef<str> for NodeId {
     fn as_ref(&self) -> &str {
         self.as_str()

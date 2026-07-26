@@ -8,14 +8,12 @@ use crate::_types::NodeId;
 pub struct IdGenerator {
     counters: HashMap<String, usize>,
 }
-
-
+ 
 impl IdGenerator {
     pub fn new() -> Self {
         Self::default()
     }
-
-    /// Generates a new unique id for the given prefix.
+ 
     pub fn next(&mut self, prefix: &str) -> NodeId {
         let counter = self.counters.entry(prefix.to_string()).or_insert(0);
         let id = NodeId::new(format!("{prefix}-{counter}"));
@@ -23,3 +21,4 @@ impl IdGenerator {
         id
     }
 }
+ 
