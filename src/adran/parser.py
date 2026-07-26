@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Union
  
-from . import _mdparser as _native
+from . import adran as _native
 from ._errors import MarkdownParseError, NodeMismatchError
 from .node import Node
  
