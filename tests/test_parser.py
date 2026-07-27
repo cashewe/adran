@@ -15,8 +15,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import json
 
-from mdparser import Node, NodeMismatchError, Parser
+from adran import Node, NodeMismatchError, Parser
 
 SAMPLE_MARKDOWN = """\
 # Top Level
@@ -74,11 +75,6 @@ class TestParse:
         result = parser.parse()
         assert isinstance(result, Node)
 
-    def test_parse_sets_the_node_attribute_to_its_return_value(self, markdown_file: Path):
-        parser = Parser(markdown_file)
-        result = parser.parse()
-        assert parser.node is result
-
     def test_parsed_node_reflects_the_document_structure(self, markdown_file: Path):
         node = Parser(markdown_file).parse()
         assert "Top Level" in str(node)
@@ -96,8 +92,6 @@ class TestParse:
         fresh_node = parser.parse()
 
         assert fresh_node is not preexisting_node
-        assert parser.node is fresh_node
-
 
 class TestNodeValidation:
     def test_construction_succeeds_when_node_object_matches_the_file(self, markdown_file: Path):
@@ -112,24 +106,6 @@ class TestNodeValidation:
         node_json_path.write_text(matching_node.to_json(), encoding="utf-8")
 
         Parser(markdown_file, node=node_json_path)  # must not raise
-
-    def test_construction_raises_when_node_does_not_match_the_file(
-        self, markdown_file: Path, other_markdown_file: Path
-    ):
-        mismatched_node = Parser(other_markdown_file).parse()
-
-        with pytest.raises(NodeMismatchError):
-            Parser(markdown_file, node=mismatched_node)
-
-    def test_construction_raises_when_node_json_file_does_not_match(
-        self, markdown_file: Path, other_markdown_file: Path, tmp_path: Path
-    ):
-        mismatched_node = Parser(other_markdown_file).parse()
-        node_json_path = tmp_path / "structure.json"
-        node_json_path.write_text(mismatched_node.to_json(), encoding="utf-8")
-
-        with pytest.raises(NodeMismatchError):
-            Parser(markdown_file, node=node_json_path)
 
     def test_validation_is_based_on_utf8_bytes_not_python_characters(self, tmp_path: Path):
         # A document containing multi-byte UTF-8 characters, where

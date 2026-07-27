@@ -59,3 +59,18 @@ from there, if i pass a depth of:
 then we just need to discover the deepest section (/s) containing our idx range and we jsut rehydrate by climbing up the tree using the parent / child ids
 
 on the flip side, we will need to additionally provide a `section_heading` field i think. for the lowest level text this will probably be generic like 'paragraph' or 'table', whereas above that it will be the actual section title. this can help us create shallow location printouts if we want i.e. `depth=2, shallow_depth=3` might allow us to rehydrate up to the section level, but also provide the text for the title of the parent / sibling sections and '...' out all the body information.
+
+
+# Bugs
+
+based on my test case the following still need work:
+```
+[RecallEntry(heading='adran', body_range=(9, 3445)),
+ RecallEntry(heading='jist', body_range=None),
+ RecallEntry(heading='jist 2.0: you can (not) change the jist', body_range=(1905, 3445))]
+ ```
+
+- subsections in siblings arent populated, only overall sibling headings ('### extra bits' should be between jist and jist 2.0)
+- the ignoring of bodies isnt universal (we correctly ignore the body of jist, but not of adran itself? ignoring should hold for all parent layers.)
+- the body_range for parent sections needs to be edited to not include the ranges of the child sections, it should be just the text in the parent pre-subsection areas. this should only hold for nodes of type 'Section'
+- we should output a python object 'list' wrapper which can be formatted with the underlying text if we so wish. this would help with debugging too.

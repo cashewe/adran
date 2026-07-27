@@ -16,7 +16,7 @@ import json
  
 import pytest
  
-from mdparser import Node
+from adran import Node
  
  
 def make_node_json(
