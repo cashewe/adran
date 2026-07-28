@@ -55,8 +55,9 @@ pub fn recall_text_indices(document: &ParsedDocument, query: &RecallQuery) -> Re
         }
 
         let heading = node.heading.trim();
-        let text_included = query.text_depth.map_or(true, |d| level <= d);
-        let heading_included = query.heading_depth.map_or(true, |d| level <= d);
+        let rank = level + 1;
+        let text_included = query.text_depth.map_or(true, |d| rank <= d);
+        let heading_included = query.heading_depth.map_or(true, |d| rank <= d);
 
         if !text_included && !heading_included {
             break;
@@ -68,6 +69,7 @@ pub fn recall_text_indices(document: &ParsedDocument, query: &RecallQuery) -> Re
                 RecallEntry {
                     heading: Some(heading.to_string()),
                     body_range: body_range_for_section(document, node.id.as_str()),
+                    depth: node.depth,
                 },
             ));
         } else if heading_included {
@@ -76,40 +78,51 @@ pub fn recall_text_indices(document: &ParsedDocument, query: &RecallQuery) -> Re
                 RecallEntry {
                     heading: Some(heading.to_string()),
                     body_range: None,
+                    depth: node.depth,
                 },
             ));
         }
 
         if let Some(parent_id) = node.parent.as_ref() {
             if let Some(parent) = by_id.get(parent_id.as_str()) {
-                for sibling_id in &parent.children {
-                    if sibling_id.as_str() == node.id.as_str() {
-                        continue;
-                    }
-                    let Some(sibling) = by_id.get(sibling_id.as_str()).copied() else {
-                        continue;
-                    };
-                    if sibling.mdast_type != MdastType::Section {
-                        continue;
-                    }
-                    let sib_heading = sibling.heading.trim();
+                let parent_rank = rank + 1;
+                let parent_text_included = query.text_depth.map_or(true, |d| parent_rank <= d);
+                let parent_heading_included = query.heading_depth.map_or(true, |d| parent_rank <= d);
+                let parent_included = parent_text_included || parent_heading_included;
 
-                    if query.text_siblings && text_included {
-                        staged.push((
-                            sibling.range.start,
-                            RecallEntry {
-                                heading: Some(sib_heading.to_string()),
-                                body_range: body_range_for_section(document, sibling.id.as_str()),
-                            },
-                        ));
-                    } else if query.heading_siblings && heading_included {
-                        staged.push((
-                            sibling.range.start,
-                            RecallEntry {
-                                heading: Some(sib_heading.to_string()),
-                                body_range: None,
-                            },
-                        ));
+                if parent_included {
+                    for sibling_id in &parent.children {
+                        if sibling_id.as_str() == node.id.as_str() {
+                            continue;
+                        }
+                        let Some(sibling) = by_id.get(sibling_id.as_str()).copied() else {
+                            continue;
+                        };
+                        if sibling.mdast_type != MdastType::Section {
+                            continue;
+                        }
+                        let sib_heading = sibling.heading.trim();
+
+                        if query.text_siblings && text_included {
+                            staged.push((
+                                sibling.range.start,
+                                RecallEntry {
+                                    heading: Some(sib_heading.to_string()),
+                                    body_range: body_range_for_section(document, sibling.id.as_str()),
+                                    depth: sibling.depth,
+                                },
+                            ));
+                        } else if query.heading_siblings && heading_included {
+                            staged.push((
+                                sibling.range.start,
+                                RecallEntry {
+                                    heading: Some(sib_heading.to_string()),
+                                    body_range: None,
+                                    depth: sibling.depth,
+                                },
+                            ));
+                            push_subsection_headings(document, &by_id, sibling, false, &mut staged);
+                        }
                     }
                 }
             }
@@ -125,22 +138,52 @@ pub fn recall_text_indices(document: &ParsedDocument, query: &RecallQuery) -> Re
 
 fn body_range_for_section(document: &ParsedDocument, section_id: &str) -> Option<RangeIdx> {
     let section = document.nodes.iter().find(|node| node.id.as_str() == section_id)?;
-    let body_start = section
-        .children
-        .iter()
-        .filter_map(|child_id| {
-            document
-                .nodes
-                .iter()
-                .find(|node| node.id.as_str() == child_id.as_str())
-                .map(|child| child.range.start)
-        })
-        .min()
-        .unwrap_or(section.range.start);
 
-    if body_start >= section.range.end {
+    let mut content_start: Option<usize> = None;
+    let mut first_subsection_start: Option<usize> = None;
+
+    for child_id in &section.children {
+        let Some(child) = document.nodes.iter().find(|node| node.id.as_str() == child_id.as_str()) else {
+            continue;
+        };
+        if child.mdast_type == MdastType::Section {
+            first_subsection_start = Some(first_subsection_start.map_or(child.range.start, |s| s.min(child.range.start)));
+        } else {
+            content_start = Some(content_start.map_or(child.range.start, |s| s.min(child.range.start)));
+        }
+    }
+
+    let body_start = content_start?;
+    let body_end = first_subsection_start.unwrap_or(section.range.end);
+
+    if body_start >= body_end {
         return None;
     }
 
-    Some(RangeIdx::new(body_start, section.range.end))
+    Some(RangeIdx::new(body_start, body_end))
+}
+
+
+fn push_subsection_headings(
+    document: &ParsedDocument,
+    by_id: &HashMap<&str, &crate::_types::NodeType>,
+    node: &crate::_types::NodeType,
+    include_text: bool,
+    staged: &mut Vec<(usize, RecallEntry)>,
+) {
+    for child_id in &node.children {
+        let Some(child) = by_id.get(child_id.as_str()).copied() else { continue };
+        if child.mdast_type != MdastType::Section {
+            continue;
+        }
+        staged.push((
+            child.range.start,
+            RecallEntry {
+                heading: Some(child.heading.trim().to_string()),
+                body_range: if include_text { body_range_for_section(document, child.id.as_str()) } else { None },
+                depth: child.depth,
+            },
+        ));
+        push_subsection_headings(document, by_id, child, include_text, staged);
+    }
 }

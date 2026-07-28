@@ -10,6 +10,7 @@ class RecallEntry:
 
     heading: str | None
     body_range: tuple[int, int] | None
+    depth: int
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> "RecallEntry":
@@ -17,7 +18,8 @@ class RecallEntry:
         return cls(
             heading=data.get("heading"),
             body_range=(body_range["start"], body_range["end"]) if body_range else None,
+            depth=data["depth"]
         )
 
     def __repr__(self) -> str:
-        return f"RecallEntry(heading={self.heading!r}, body_range={self.body_range!r})"
+        return f"RecallEntry(heading={self.heading!r}, body_range={self.body_range!r}, depth={self.depth!r})"

@@ -2,75 +2,82 @@
 
 (*welsh*, 'ah-dran' - meaning 'section')
 
-`Adran` is a small package which enables heirarchical expansion of markdown formatted text. using indexes, index ranges or subtext strings, return the nested text sections that are relevant to the matched region. `Adran` is likely to be a small to the point of laughably so package, spun off from a feature request for the related [`darn`](https://github.com/cashewe/darn) package. Its delivered separately as it may be useful without need for chunking.
+`Adran` is a small package which enables heirarchical expansion of markdown formatted text based on text index. `adran` builds its heirarchies based on markdown heading nests, and can be used to identify the sections, parent sections and sibling sections of a range of text from the source file.
 
-## jist
+the intended use of `adran` is as a post vector-search step in RAG pipelines, though users may find it of use elsewhere too.
 
-- parse to mdast
-- recursively convert mdast to json-ifiable node object structure:
+## Setup
 
-```
-  - id
-  - type
-  - range
-  - parent
-  - children
-  - depth
-  - meta
-    - wording (for headings)
-    - columns (for tables)
-    ... ?
-```
-
-- pass this to the user to store as they wish
-- second object recieves an idx / idx range and... parses the json... somehow...
-
-that last part is pretty vague huh... we'll need to figure *something* out for it, but for now i think we'll assume itll fall out in the wash and focus on the correct parsing of the mdast. 
-
-### extra bits:
-- meta may need some custom parsing, and maybe more types than im giving credit here. dont think we need stuff like code langauge for the sake of chunking though?
-- there is heading depth, but content depth has no native md context. we will need to implement this to allow for 'sibling' based recontextualisation
-
-I'm still optimistic this is a short week or so long project, but we'll have to see when we get there. its tooken me over two months to get to this point...
-
-for now, dont look for overlap with darn. just assume that since darn preserves start / end index of chunks that they are inherantly overlapping. it may be that in practice they can share an mdast parsing phase or something in future, but thats in future - i dont want to get caught up doing that right away.
-
-## jist 2.0: you can (not) change the jist
-
-i think theres some refinement possible here.
-
-ultimately the best consumer layer will look somewhat like:
+To use `adran`, you must first install it, ideally into a python virtual environment:
 
 ```
-rehydrate(start_idx, finish_idx, structure, depth)
+pip install uv
+
+uv venv --python 3.13
+source .venv/bin/activate # or .venv\Scripts\activate on windows
+
+uv pip install darn_it
 ```
 
-where the `depth` dictates the number of 'layers' above the indexes to include. in other words:
-- we dont need metafields, theyre a distraction
-- we dont need nodetype, its a distraction
-- we just need 'sections' which represent a nested collection of structures in the text, with parent / child sections and start / end idx's
+## Usage
 
-from there, if i pass a depth of:
+You can import it into your python session to use:
 
-- 1: i will return the section at the bottom of the tree (this will be at the level of paragraph, table, list etc...)
-- 2: i will include its parent section (this will be everything under the lowest level heading we have)
-- 3: i will include its parent section along with its siblings (this will include a heading abve ours as well as those to the left / right)
-
-then we just need to discover the deepest section (/s) containing our idx range and we jsut rehydrate by climbing up the tree using the parent / child ids
-
-on the flip side, we will need to additionally provide a `section_heading` field i think. for the lowest level text this will probably be generic like 'paragraph' or 'table', whereas above that it will be the actual section title. this can help us create shallow location printouts if we want i.e. `depth=2, shallow_depth=3` might allow us to rehydrate up to the section level, but also provide the text for the title of the parent / sibling sections and '...' out all the body information.
-
-
-# Bugs
-
-based on my test case the following still need work:
 ```
-[RecallEntry(heading='adran', body_range=(9, 3445)),
- RecallEntry(heading='jist', body_range=None),
- RecallEntry(heading='jist 2.0: you can (not) change the jist', body_range=(1905, 3445))]
- ```
+from adran import Parser
 
-- subsections in siblings arent populated, only overall sibling headings ('### extra bits' should be between jist and jist 2.0)
-- the ignoring of bodies isnt universal (we correctly ignore the body of jist, but not of adran itself? ignoring should hold for all parent layers.)
-- the body_range for parent sections needs to be edited to not include the ranges of the child sections, it should be just the text in the parent pre-subsection areas. this should only hold for nodes of type 'Section'
-- we should output a python object 'list' wrapper which can be formatted with the underlying text if we so wish. this would help with debugging too.
+parser = Parser(
+  markdown_path="README.md"
+)
+nodes = parser.parse()
+```
+this will create a json formatted output explaining the section structure of your markdown text input, for instance the output for this README can be found in `tests/README_parse_output.json`
+
+you can then choose to consume this data at a later point, by providing the index range in your markdown file that you wish to expand from:
+
+```
+parser.recall_text_indices(
+    start=2_800,
+    end=2_900,
+    text_depth=1,
+    heading_depth=None,
+    text_siblings=False,
+    heading_siblings=True,
+)
+```
+
+yielding the following outcome:
+
+```
+[
+    RecallEntry(heading='adran', body_range=None, depth=1),
+    RecallEntry(heading='Setup', body_range=None, depth=2),
+    RecallEntry(heading='Usage', body_range=None, depth=2),
+    RecallEntry(heading='Recall Text Indices Variables', body_range=None, depth=3),
+    RecallEntry(heading='Start / End', body_range=None, depth=4),
+    RecallEntry(heading='Text / Heading Depth', body_range=(1582, 2194), depth=4),
+    RecallEntry(heading='Text / Heading Siblings', body_range=None, depth=4)
+]
+```
+
+### Recall Text Indices Variables
+
+#### Start / End
+
+These variables define the index range in the markdown file you want to expand from.
+
+#### Text / Heading Depth
+
+These variables define how far up the section tree you wish to climb. see the following table for details:
+
+| value | meaning |
+|---|---|
+| 0 | do not even include the section your range is included within |
+| 1 | include the sections your range is explicitly covering, but nothing more |
+| 2 | include the parent section of your current subsection, (along with any siblings, if siblings are turned on) |
+| N | incude the 'N - 1' parent sections of your current subsection, (along with any siblings, if siblings are turned on) |
+| None | Terminal value, selects all so you dont need to know depth ahead of time |
+
+#### Text / Heading Siblings
+
+These variables decide whether `adran` will expand strictly linearly or include sibling sections during its expansion (i.e. other nodes not in the range that are of the same level of depth). the siblings will be bound by your rules on depth - but bare in mind children of siblings will therefore always be included since these will always be at the right depth if the parent is.

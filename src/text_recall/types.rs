@@ -34,6 +34,7 @@ impl RecallQuery {
 pub struct RecallEntry {
     pub heading: Option<String>,
     pub body_range: Option<RangeIdx>,
+    pub depth: u32,
 }
 
 pub type RecallResult = Vec<RecallEntry>;
