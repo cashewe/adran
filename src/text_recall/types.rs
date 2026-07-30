@@ -32,6 +32,7 @@ impl RecallQuery {
 
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct RecallEntry {
+    pub id: String,
     pub heading: Option<String>,
     pub body_range: Option<RangeIdx>,
     pub depth: u32,

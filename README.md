@@ -36,7 +36,7 @@ this will create a json formatted output explaining the section structure of you
 you can then choose to consume this data at a later point, by providing the index range in your markdown file that you wish to expand from:
 
 ```
-parser.recall_text_indices(
+outcome = parser.recall_text_indices(
     start=2_800,
     end=2_900,
     text_depth=1,
@@ -58,6 +58,14 @@ yielding the following outcome:
     RecallEntry(heading='Text / Heading Depth', body_range=(1582, 2194), depth=4),
     RecallEntry(heading='Text / Heading Siblings', body_range=None, depth=4)
 ]
+```
+
+users may then wish to use the built in `.rehydrate_range()` method to then access the text:
+
+```
+outcome.rehydrate_range(
+    # the markdown path must be provided either here or in the Parser
+)
 ```
 
 ### Recall Text Indices Variables

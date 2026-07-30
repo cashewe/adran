@@ -6,7 +6,7 @@ from typing import Union
 from . import adran as _native
 from ._errors import MarkdownParseError, NodeMismatchError
 from .node import Node
-from .recall_entry import RecallEntry
+from .recall_entry import RecallEntry, Entries
  
  
 class Parser:
@@ -82,7 +82,10 @@ class Parser:
             text_siblings,
             heading_siblings,
         )
-        return [RecallEntry.from_json(entry) for entry in json.loads(raw_json)]
+        return Entries(
+            entries=[RecallEntry.from_json(entry) for entry in json.loads(raw_json)],
+            md_filepath=str(self.markdown_path) if self.markdown_path else "",
+        )
   
     def _read_source(self) -> str:
         return self.markdown_path.read_text(encoding="utf-8")
