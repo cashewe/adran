@@ -1,6 +1,6 @@
 [project]
 name = "adran"
-version = "0.1.0"
+version = "1.0.0"
 description = "Hierarchical expansion of markdown formatted text."
 readme = "README.md"
 requires-python = ">=3.10"

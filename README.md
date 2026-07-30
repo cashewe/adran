@@ -1,10 +1,10 @@
 # adran
 
+![piccy](docs/watering_the_lovely_plants.jpg)
+
 (*welsh*, 'ah-dran' - meaning 'section')
 
-`Adran` is a small package which enables heirarchical expansion of markdown formatted text based on text index. `adran` builds its heirarchies based on markdown heading nests, and can be used to identify the sections, parent sections and sibling sections of a range of text from the source file.
-
-the intended use of `adran` is as a post vector-search step in RAG pipelines, though users may find it of use elsewhere too.
+`Adran` is a small package which enables heirarchical expansion of markdown formatted text based on index ranges - especially useful for rehydrating text in RAG pipelines. `adran` builds its heirarchies based on markdown heading nests, and can be used to identify the sections, parent sections and sibling sections of a range of text from the source file.
 
 ## Setup
 

@@ -13,4 +13,6 @@ for this reason, only structures likely to be large have bothered to be included
 - tables
 - lists
 
-which should ultimately cover all markdown structures anyways as everything else exists within these structures as nested values.
+which should ultimately cover all markdown structures anyways as everything else exists within these structures as nested values...
+
+UPDATE: i mostly moved away from bothering with mdast values by now - its all sectional atm. maybe i should clean this up, or maybe i should leave it in and expose the mdast structures as i initially intended... we'll find out next time, it wont be in v1.0.0 at least.
