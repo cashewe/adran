@@ -4,7 +4,7 @@
 
 (*welsh*, 'ah-dran' - meaning 'section')
 
-`Adran` is a small package which enables heirarchical expansion of markdown formatted text based on index ranges - especially useful for rehydrating text in RAG pipelines. `adran` builds its heirarchies based on markdown heading nests, and can be used to identify the sections, parent sections and sibling sections of a range of text from the source file.
+`Adran` is a small package which enables heirarchical expansion of markdown formatted text based on index ranges - especially useful for expanding chunks in RAG pipelines. `adran` builds its heirarchies based on markdown heading nests, and can be used to identify the sections, parent sections and sibling sections of a range of text from the source file.
 
 ## Setup
 
@@ -89,3 +89,7 @@ These variables define how far up the section tree you wish to climb. see the fo
 #### Text / Heading Siblings
 
 These variables decide whether `adran` will expand strictly linearly or include sibling sections during its expansion (i.e. other nodes not in the range that are of the same level of depth). the siblings will be bound by your rules on depth - but bare in mind children of siblings will therefore always be included since these will always be at the right depth if the parent is.
+
+## But... Why?
+
+Though small chunks are often useful for vector search, the limited context can cause RAG systems to give incorrect or partial answers. by allowing a posthoc reexpansion step, your pipeline is able to find the best of both worlds.
