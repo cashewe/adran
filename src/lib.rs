@@ -38,7 +38,7 @@ fn run_recall_text_indices(
 
 
 #[pymodule]
-fn adran(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn adran(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_markdown, m)?)?;
     m.add_function(wrap_pyfunction!(run_recall_text_indices, m)?)?;
     Ok(())
