@@ -50,11 +50,13 @@ class Entries:
     def rehydrate_range(
         self,
         md_filepath: str | None = None,
-        incl_ranges: bool = False,
+        show_filtered_ranges: bool = False,
     ) -> str:
         text_path = self._get_filepath(md_filepath)
         with open(text_path, "r", encoding="utf-8") as f:
-            lines = f.read()
+            content = f.read()
+
+        content_bytes = content.encode('utf-8')
 
         output = ""
         for entry in self.entries:
@@ -62,11 +64,15 @@ class Entries:
             if entry.body_range:
                 start, end = entry.body_range
                 if entry.filtered:
-                    output += f"[{start}:{end}]\n\n"
-                elif incl_ranges:
-                    output += "".join(lines[start:end])
+                    if show_filtered_ranges:
+                        output += f"[{start}:{end}]\n\n"
+                    else:
+                        output += '...\n\n'
+                else:
+                    text_chunk = content_bytes[start:end].decode('utf-8')
+                    output += text_chunk
             else:
-                output += '...\n\n'
+                output += '\n\n'
         
         return output
         

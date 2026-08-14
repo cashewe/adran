@@ -65,8 +65,11 @@ users may then wish to use the built in `.rehydrate_range()` method to then acce
 ```
 outcome.rehydrate_range(
     # the markdown path must be provided either here or in the Parser
+    show_filtered_ranges=True,
 )
 ```
+
+set `show_filtered_ranges` to true to show the idx range of sections whose headings exist but bodies have been filtered - this is (potentially) useful for agentic RAG (idk ive not tested it truth be told).
 
 ### Recall Text Indices Variables
 
