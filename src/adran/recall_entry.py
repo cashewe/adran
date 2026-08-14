@@ -11,6 +11,7 @@ class RecallEntry:
     heading: str | None
     body_range: tuple[int, int] | None
     depth: int
+    filtered: bool = False
 
     @classmethod
     def from_json(cls, data: dict[str, Any]) -> "RecallEntry":
@@ -18,7 +19,8 @@ class RecallEntry:
         return cls(
             heading=data.get("heading"),
             body_range=(body_range["start"], body_range["end"]) if body_range else None,
-            depth=data["depth"]
+            depth=data["depth"],
+            filtered=data.get("filtered", False),
         )
 
     def __repr__(self) -> str:
@@ -45,7 +47,11 @@ class Entries:
     def __delitem__(self, key):
         del self.entries[key]
 
-    def rehydrate_range(self, md_filepath: str | None = None):
+    def rehydrate_range(
+        self,
+        md_filepath: str | None = None,
+        incl_ranges: bool = False,
+    ) -> str:
         text_path = self._get_filepath(md_filepath)
         with open(text_path, "r", encoding="utf-8") as f:
             lines = f.read()
@@ -55,7 +61,10 @@ class Entries:
             output += ('#' * entry.depth) + entry.heading + "\n"
             if entry.body_range:
                 start, end = entry.body_range
-                output += "".join(lines[start:end])
+                if entry.filtered:
+                    output += f"[{start}:{end}]\n\n"
+                elif incl_ranges:
+                    output += "".join(lines[start:end])
             else:
                 output += '...\n\n'
         

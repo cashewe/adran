@@ -211,7 +211,7 @@ class TestRecallTextIndices:
             "extra bits:",
             "jist 2.0: you can (not) change the jist",
         ]
-        assert entries[-1].body_range is None  # sibling: heading only
+        assert entries[-1].filtered is True  # sibling: heading only (body filtered)
         # the actual match chain keeps its text
         assert entries[0].body_range == (9, 3445)
         assert entries[1].body_range == (515, 1859)
@@ -254,8 +254,8 @@ class TestRecallTextIndices:
         assert entries[1].body_range == (1079, 1859)
         # one level up: both the ancestor and its sibling are heading-only,
         # despite text_siblings=True, because text_depth stopped at 0
-        assert entries[0].body_range is None
-        assert entries[2].body_range is None
+        assert entries[0].filtered is True   # ancestor: heading only
+        assert entries[2].filtered is True   # sibling: heading only
 
     def test_text_depth_zero_limits_to_match_only(self):
         """text_depth=0 with heading_depth=0 too: nothing above the match
@@ -285,9 +285,10 @@ class TestRecallTextIndices:
         )
 
         assert _headings(entries) == ["adran", "jist", "extra bits:"]
-        assert entries[0].body_range is None            # adran: heading only
-        assert entries[1].body_range is None             # jist: heading only
+        assert entries[0].filtered is True            # adran: heading only
+        assert entries[1].filtered is True             # jist: heading only
         assert entries[2].body_range == (1079, 1859)      # extra bits: the match itself
+        assert entries[2].filtered is False             # extra bits: text included
 
     def test_no_match_returns_empty(self):
         """A span outside every node's range has nothing to attach to."""

@@ -128,6 +128,7 @@ fn stage_upward(
                         heading: Some(heading.to_string()),
                         body_range: body_range_for_section(document, node.id.as_str()),
                         depth: node.depth,
+                        filtered: false,
                     },
                 ));
             } else if heading_included {
@@ -136,8 +137,9 @@ fn stage_upward(
                     RecallEntry {
                         id: node.id.as_str().to_string(),
                         heading: Some(heading.to_string()),
-                        body_range: None,
+                        body_range: body_range_for_section(document, node.id.as_str()),
                         depth: node.depth,
+                        filtered: true,
                     },
                 ));
             }
@@ -172,6 +174,7 @@ fn stage_upward(
                                         heading: Some(sib_heading.to_string()),
                                         body_range: body_range_for_section(document, sibling.id.as_str()),
                                         depth: sibling.depth,
+                                        filtered: false,
                                     },
                                 ));
                             }
@@ -182,8 +185,9 @@ fn stage_upward(
                                     RecallEntry {
                                         id: sibling.id.as_str().to_string(),
                                         heading: Some(sib_heading.to_string()),
-                                        body_range: None,
+                                        body_range: body_range_for_section(document, sibling.id.as_str()),
                                         depth: sibling.depth,
+                                        filtered: true,
                                     },
                                 ));
                             }
@@ -230,8 +234,9 @@ fn stage_downward(
                 RecallEntry {
                     id: child.id.as_str().to_string(),
                     heading: Some(child.heading.trim().to_string()),
-                    body_range: if text_included { body_range_for_section(document, child.id.as_str()) } else { None },
+                    body_range: body_range_for_section(document, child.id.as_str()),
                     depth: child.depth,
+                    filtered: !text_included,
                 },
             ));
         }
@@ -286,8 +291,9 @@ fn push_subsection_headings(
                 RecallEntry {
                     id: child.id.as_str().to_string(),
                     heading: Some(child.heading.trim().to_string()),
-                    body_range: if include_text { body_range_for_section(document, child.id.as_str()) } else { None },
+                    body_range: body_range_for_section(document, child.id.as_str()),
                     depth: child.depth,
+                    filtered: !include_text,
                 },
             ));
         }
